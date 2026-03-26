@@ -39,6 +39,8 @@ public class Statement {
     protected int lineNumber;
     protected String line;
     protected List<Statement> contents = new ArrayList<>();
+    private static final String SPACES = "                               ";
+    private static final String[] INDENT_CACHE = new String[SPACES.length() + 1];
 
     protected Statement(int lineNumber, String line) {
         this.lineNumber = lineNumber;
@@ -70,16 +72,21 @@ public class Statement {
     }
 
     protected String toString(int indent) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getIndent(indent));
+        // Pre-size StringBuilder to reduce resizing. Use contents size only if non-null.
+        int approxChildren = (contents == null) ? 0 : contents.size();
+        int estimated = Math.max(32, line.length() + indent + 4 + approxChildren * 32);
+        StringBuilder sb = new StringBuilder(estimated);
+
+        String indentStr = getIndent(indent);
+        sb.append(indentStr);
         sb.append(line);
         if (contents != null) {
             sb.append(" {\n");
             for (Statement statement : contents) {
                 sb.append(statement.toString(indent + 4));
-                sb.append("\n");
+                sb.append('\n');
             }
-            sb.append(getIndent(indent));
+            sb.append(indentStr);
             sb.append("}");
         }
         return sb.toString();
