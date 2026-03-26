@@ -135,7 +135,8 @@ public class AudioStream extends AudioData implements Closeable {
     }
 
     public int getId(int index) {
-        return ids[index];
+        final int[] idsLocal = this.ids;
+        return idsLocal[index];
     }
 
     public void setId(int index, int id) {
