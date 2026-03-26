@@ -118,9 +118,11 @@ public final class IntMap<T> implements Iterable<Entry<T>>, Cloneable, JmeClonea
 
     public boolean containsValue(Object value) {
         Entry[] table = this.table;
-        for (int i = table.length; i-- > 0;){
-            for (Entry e = table[i]; e != null; e = e.next){
-                if (e.value.equals(value)){
+        int len = table.length;
+        for (int i = 0; i < len; i++) {
+            for (Entry e = table[i]; e != null; e = e.next) {
+                Object v = e.value;
+                if (v.equals(value)) {
                     return true;
                 }
             }
