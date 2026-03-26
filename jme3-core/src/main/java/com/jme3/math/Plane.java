@@ -246,12 +246,7 @@ public class Plane implements Savable, Cloneable, java.io.Serializable {
     }
 
     public boolean isOnPlane(Vector3f point) {
-        float dist = pseudoDistance(point);
-        if (dist < FastMath.FLT_EPSILON && dist > -FastMath.FLT_EPSILON) {
-            return true;
-        } else {
-            return false;
-        }
+        return Math.abs(normal.dot(point) - constant) < FastMath.FLT_EPSILON;
     }
 
     /**
