@@ -117,10 +117,14 @@ public class Tweens {
      * @return a new instance
      */
     public static Tween sineStep(Tween... delegates) {
-        if (delegates.length == 1) {
+        int length = delegates.length;
+        if (length == 0) {
+            throw new IllegalArgumentException("At least one delegate tween is required");
+        }
+        if (length == 1) {
             return new Curve(delegates[0], SINE);
         }
-        return new Curve(sequence(delegates), SINE);
+        return new Curve(new Sequence(delegates), SINE);
     }
 
     /**
