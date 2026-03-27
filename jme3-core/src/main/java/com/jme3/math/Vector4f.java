@@ -342,8 +342,10 @@ public final class Vector4f implements Savable, Cloneable, java.io.Serializable 
      * or false otherwise.
      */
     public boolean isUnitVector() {
-        float len = length();
-        return 0.99f < len && len < 1.01f;
+        // Avoid the costly sqrt operation by comparing squared lengths.
+        // 0.99^2 = 0.9801f, 1.01^2 = 1.0201f
+        float lenSq = lengthSquared();
+        return 0.9801f < lenSq && lenSq < 1.0201f;
     }
 
     /**
