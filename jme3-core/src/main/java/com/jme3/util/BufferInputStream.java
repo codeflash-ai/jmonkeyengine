@@ -67,6 +67,8 @@ public class BufferInputStream extends InputStream {
 
     @Override
     public int available() {
-        return input.remaining();
+        // Use a local reference and compute limit - position to avoid extra virtual call overhead.
+        final ByteBuffer b = input;
+        return b.limit() - b.position();
     }
 }
