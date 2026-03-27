@@ -388,9 +388,70 @@ public final class Transform implements Savable, Cloneable, java.io.Serializable
         if (store == null) {
             store = new Matrix4f();
         }
-        store.setTranslation(translation);
-        rot.toTransformMatrix(store);
-        store.setScale(scale);
+
+        /*
+         * Build rotation matrix from quaternion directly, apply scale to the
+         * rotation matrix columns (scale then rotate), then set translation.
+         *
+         * This replaces the previous sequence of store.setTranslation(...);
+         * rot.toTransformMatrix(store); store.setScale(...);
+         * to avoid extra method calls and redundant internal work.
+         */
+
+        float qx = rot.getX();
+        float qy = rot.getY();
+        float qz = rot.getZ();
+        float qw = rot.getW();
+
+        // precompute products
+        float xx = qx * qx;
+        float yy = qy * qy;
+        float zz = qz * qz;
+        float xy = qx * qy;
+        float xz = qx * qz;
+        float xw = qx * qw;
+        float yz = qy * qz;
+        float yw = qy * qw;
+        float zw = qz * qw;
+
+        // rotation matrix (unscaled)
+        float r00 = 1f - 2f * (yy + zz);
+        float r01 = 2f * (xy - zw);
+        float r02 = 2f * (xz + yw);
+
+        float r10 = 2f * (xy + zw);
+        float r11 = 1f - 2f * (xx + zz);
+        float r12 = 2f * (yz - xw);
+
+        float r20 = 2f * (xz - yw);
+        float r21 = 2f * (yz + xw);
+        float r22 = 1f - 2f * (xx + yy);
+
+        // apply scale to the rotation columns (scale then rotate)
+        float sx = scale.getX();
+        float sy = scale.getY();
+        float sz = scale.getZ();
+
+        store.m00 = r00 * sx;
+        store.m10 = r10 * sx;
+        store.m20 = r20 * sx;
+        store.m30 = 0f;
+
+        store.m01 = r01 * sy;
+        store.m11 = r11 * sy;
+        store.m21 = r21 * sy;
+        store.m31 = 0f;
+
+        store.m02 = r02 * sz;
+        store.m12 = r12 * sz;
+        store.m22 = r22 * sz;
+        store.m32 = 0f;
+
+        store.m03 = translation.getX();
+        store.m13 = translation.getY();
+        store.m23 = translation.getZ();
+        store.m33 = 1f;
+
         return store;
     }
 
