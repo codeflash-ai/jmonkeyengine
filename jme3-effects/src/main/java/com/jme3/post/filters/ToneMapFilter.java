@@ -59,6 +59,7 @@ public class ToneMapFilter extends Filter {
      */
     public ToneMapFilter() {
         super("ToneMapFilter");
+        this.whitePoint = DEFAULT_WHITEPOINT.clone();
     }
 
     /**
@@ -67,7 +68,7 @@ public class ToneMapFilter extends Filter {
      * @param whitePoint The intensity of the brightest part of the scene. 
      */
     public ToneMapFilter(Vector3f whitePoint) {
-        this();
+        super("ToneMapFilter");
         this.whitePoint = whitePoint.clone();
     }
     
