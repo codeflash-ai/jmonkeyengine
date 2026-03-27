@@ -46,6 +46,7 @@ import javax.management.ObjectName;
 public class MemoryUtils {
     private static MBeanServer mbeans = ManagementFactory.getPlatformMBeanServer();
     private static ObjectName directPool;
+    private static final Logger logger = Logger.getLogger(MemoryUtils.class.getName());
     static {
         try {
             // Create the name reference for the direct buffer pool’s MBean
@@ -67,11 +68,12 @@ public class MemoryUtils {
      */
     public static long getDirectMemoryUsage() {
         try {
-            Long value = (Long)mbeans.getAttribute(directPool, "MemoryUsed");
+            MBeanServer server = mbeans;
+            ObjectName pool = directPool;
+            Long value = (Long) server.getAttribute(pool, "MemoryUsed");
             return value == null ? -1 : value;
         } catch (JMException ex) {
-            Logger.getLogger(MemoryUtils.class.getName())
-                    .log(Level.SEVERE, "Error retrieving MemoryUsed", ex);
+            logger.log(Level.SEVERE, "Error retrieving MemoryUsed", ex);
             return -1;
         }
     }
