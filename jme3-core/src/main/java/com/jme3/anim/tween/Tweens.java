@@ -189,7 +189,8 @@ public class Tweens {
      * @return a new instance
      */
     public static Tween loopCount(int count, Tween... delegates) {
-        if (delegates.length == 1) {
+        int length = delegates.length;
+        if (length == 1) {
             return new Loop(delegates[0], count);
         }
 
