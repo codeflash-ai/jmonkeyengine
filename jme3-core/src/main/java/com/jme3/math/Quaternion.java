@@ -1620,15 +1620,12 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
         if (quaternion == null) {
             return false;
         }
-        if (Float.isNaN(quaternion.x)
-                || Float.isNaN(quaternion.y)
-                || Float.isNaN(quaternion.z)
-                || Float.isNaN(quaternion.w)) {
-            return false;
-        }
-        return !Float.isInfinite(quaternion.x)
-                && !Float.isInfinite(quaternion.y)
-                && !Float.isInfinite(quaternion.z)
-                && !Float.isInfinite(quaternion.w);
+        // Cache components to avoid repeated field access and use Float.isFinite
+        // to check both NaN and infinite in a single call per component.
+        float qx = quaternion.x;
+        float qy = quaternion.y;
+        float qz = quaternion.z;
+        float qw = quaternion.w;
+        return Float.isFinite(qx) && Float.isFinite(qy) && Float.isFinite(qz) && Float.isFinite(qw);
     }
 }
