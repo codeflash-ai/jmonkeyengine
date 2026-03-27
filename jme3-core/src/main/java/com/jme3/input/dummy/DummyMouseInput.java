@@ -49,7 +49,7 @@ public class DummyMouseInput extends DummyInput implements MouseInput {
     }
 
     @Override
-    public int getButtonCount() {
+    public final int getButtonCount() {
         return 0;
     }
 
