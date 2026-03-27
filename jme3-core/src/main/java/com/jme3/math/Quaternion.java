@@ -1430,16 +1430,36 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
         if (other == null) {
             return false;
         }
-        if (Float.compare(Math.abs(other.x - x), epsilon) > 0) {
+        // Cache component differences in local variables to avoid repeated field access
+        float dx = other.x - x;
+        if (dx < 0.0f) {
+            dx = -dx;
+        }
+        if (Float.compare(dx, epsilon) > 0) {
             return false;
         }
-        if (Float.compare(Math.abs(other.y - y), epsilon) > 0) {
+
+        float dy = other.y - y;
+        if (dy < 0.0f) {
+            dy = -dy;
+        }
+        if (Float.compare(dy, epsilon) > 0) {
             return false;
         }
-        if (Float.compare(Math.abs(other.z - z), epsilon) > 0) {
+
+        float dz = other.z - z;
+        if (dz < 0.0f) {
+            dz = -dz;
+        }
+        if (Float.compare(dz, epsilon) > 0) {
             return false;
         }
-        if (Float.compare(Math.abs(other.w - w), epsilon) > 0) {
+
+        float dw = other.w - w;
+        if (dw < 0.0f) {
+            dw = -dw;
+        }
+        if (Float.compare(dw, epsilon) > 0) {
             return false;
         }
         return true;
