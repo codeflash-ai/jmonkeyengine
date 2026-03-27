@@ -1391,25 +1391,25 @@ public final class Quaternion implements Savable, Cloneable, java.io.Serializabl
      */
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Quaternion)) {
-            return false;
-        }
-
         if (this == o) {
             return true;
         }
 
+        if (!(o instanceof Quaternion)) {
+            return false;
+        }
+
         Quaternion comp = (Quaternion) o;
-        if (Float.compare(x, comp.x) != 0) {
+        if (Float.floatToIntBits(x) != Float.floatToIntBits(comp.x)) {
             return false;
         }
-        if (Float.compare(y, comp.y) != 0) {
+        if (Float.floatToIntBits(y) != Float.floatToIntBits(comp.y)) {
             return false;
         }
-        if (Float.compare(z, comp.z) != 0) {
+        if (Float.floatToIntBits(z) != Float.floatToIntBits(comp.z)) {
             return false;
         }
-        if (Float.compare(w, comp.w) != 0) {
+        if (Float.floatToIntBits(w) != Float.floatToIntBits(comp.w)) {
             return false;
         }
         return true;
