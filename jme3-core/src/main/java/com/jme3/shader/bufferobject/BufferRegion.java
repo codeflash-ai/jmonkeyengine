@@ -73,16 +73,15 @@ public class BufferRegion implements Savable, Cloneable {
         ByteBuffer d = bo.getData();
         if (source == null || d != source || slice == null) {
             source = d;
-            int currentPos = source.position();
-            int currentLimit = source.limit();
+            // Use duplicate() to avoid modifying the original buffer's position/limit,
+            // which saves restoring work and reduces side effects.
+            ByteBuffer dup = source.duplicate();
             assert end < source.capacity() : "Can't set limit at " + end + " on capacity " + source.capacity();
-            source.limit(end + 1);
-            source.position(start);
-            slice = source.slice();
+            dup.position(start);
+            dup.limit(end + 1);
+            slice = dup.slice();
             slice.order(source.order());
             assert slice.limit() == (end - start + 1) : "Capacity is " + slice.limit() + " but " + (end - start + 1) + " expected";
-            source.limit(currentLimit);
-            source.position(currentPos);
         }
         slice.rewind();
         return slice;
