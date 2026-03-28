@@ -43,6 +43,7 @@ public class MaterialProcessor implements AssetProcessor {
 
     @Override
     public Object createClone(Object obj) {
-        return ((Material) obj).clone();
+        final Material mat = (Material) obj;
+        return mat.clone();
     }
 }
