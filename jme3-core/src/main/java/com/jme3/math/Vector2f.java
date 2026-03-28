@@ -775,19 +775,21 @@ public final class Vector2f implements Savable, Cloneable, java.io.Serializable 
      */
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof Vector2f)) {
-            return false;
-        }
-
         if (this == o) {
             return true;
         }
 
-        Vector2f comp = (Vector2f) o;
-        if (Float.compare(x, comp.x) != 0) {
+        if (!(o instanceof Vector2f)) {
             return false;
         }
-        if (Float.compare(y, comp.y) != 0) {
+
+        Vector2f comp = (Vector2f) o;
+        int xi = Float.floatToIntBits(this.x);
+        if (xi != Float.floatToIntBits(comp.x)) {
+            return false;
+        }
+        int yi = Float.floatToIntBits(this.y);
+        if (yi != Float.floatToIntBits(comp.y)) {
             return false;
         }
         return true;
