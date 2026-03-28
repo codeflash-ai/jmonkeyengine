@@ -857,45 +857,43 @@ public class VertexBuffer extends NativeObject implements Savable, Cloneable {
     }
 
     /**
-     * Get the component inside an element.
-     *
-     * @param elementIndex The element index
-     * @param componentIndex The component index
-     * @return The component, as one of the primitive types, byte, short,
-     * int or float.
-     */
-    public Object getElementComponent(int elementIndex, int componentIndex) {
-        int inPos = elementIndex * components;
-        int elementPos = componentIndex;
+         * Get the component inside an element.
+         *
+         * @param elementIndex The element index
+         * @param componentIndex The component index
+         * @return The component, as one of the primitive types, byte, short,
+         * int or float.
+         */
+        public Object getElementComponent(int elementIndex, int componentIndex) {
+            int inPos = elementIndex * components;
+            int elementPos = componentIndex;
 
-        if (format == Format.Half) {
-            inPos *= 2;
-            elementPos *= 2;
+            if (format == Format.Half) {
+                inPos *= 2;
+                elementPos *= 2;
+            }
+
+            Buffer srcData = getDataReadOnly();
+
+            int index = inPos + elementPos;
+
+            switch (format) {
+                case Byte:
+                case UnsignedByte:
+                case Half:
+                    return ((ByteBuffer) srcData).get(index);
+                case Short:
+                case UnsignedShort:
+                    return ((ShortBuffer) srcData).get(index);
+                case Int:
+                case UnsignedInt:
+                    return ((IntBuffer) srcData).get(index);
+                case Float:
+                    return ((FloatBuffer) srcData).get(index);
+                default:
+                    throw new UnsupportedOperationException("Unrecognized buffer format: " + format);
+            }
         }
-
-        Buffer srcData = getDataReadOnly();
-
-        switch (format) {
-            case Byte:
-            case UnsignedByte:
-            case Half:
-                ByteBuffer bin = (ByteBuffer) srcData;
-                return bin.get(inPos + elementPos);
-            case Short:
-            case UnsignedShort:
-                ShortBuffer sin = (ShortBuffer) srcData;
-                return sin.get(inPos + elementPos);
-            case Int:
-            case UnsignedInt:
-                IntBuffer iin = (IntBuffer) srcData;
-                return iin.get(inPos + elementPos);
-            case Float:
-                FloatBuffer fin = (FloatBuffer) srcData;
-                return fin.get(inPos + elementPos);
-            default:
-                throw new UnsupportedOperationException("Unrecognized buffer format: " + format);
-        }
-    }
 
     /**
      * Copies a single element of data from this <code>VertexBuffer</code>
