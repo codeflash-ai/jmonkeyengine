@@ -806,12 +806,20 @@ public final class Vector2f implements Savable, Cloneable, java.io.Serializable 
         if (other == null) {
             return false;
         }
-        if (Float.compare(Math.abs(other.x - x), epsilon) > 0) {
+        // Cache fields locally to avoid repeated field accesses.
+        float tx = this.x;
+        float ty = this.y;
+
+        float dx = other.x - tx;
+        if (Float.compare(Math.abs(dx), epsilon) > 0) {
             return false;
         }
-        if (Float.compare(Math.abs(other.y - y), epsilon) > 0) {
+
+        float dy = other.y - ty;
+        if (Float.compare(Math.abs(dy), epsilon) > 0) {
             return false;
         }
+
         return true;
     }
 
