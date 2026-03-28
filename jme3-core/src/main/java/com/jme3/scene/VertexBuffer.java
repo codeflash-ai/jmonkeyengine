@@ -357,57 +357,69 @@ public class VertexBuffer extends NativeObject implements Savable, Cloneable {
     }
 
     public boolean invariant() {
-        // Does the VB hold any data?
-        if (data == null) {
-            throw new AssertionError();
-        }
-        // Position must be 0.
-        if (data.position() != 0) {
-            throw new AssertionError();
-        }
-        // Is the size of the VB == 0?
-        if (data.limit() == 0) {
-            throw new AssertionError();
-        }
-        // Does offset exceed buffer limit or negative?
-        if (offset > data.limit() || offset < 0) {
-            throw new AssertionError();
-        }
-        // Are components between 1 and 4?
+            // Cache fields locally to avoid repeated field reads / virtual calls.
+            final Buffer d = data;
+            final Usage u = usage;
+            final Type t = bufType;
+            final Format f = format;
+            final int off = offset;
 
-        // Are components between 1 and 4 and not InstanceData?
-        if (bufType != Type.InstanceData) {
-            if (components < 1 || components > 4) {
+            // Does the VB hold any data?
+            if (d == null) {
                 throw new AssertionError();
             }
-        }
+            // Position must be 0.
+            if (d.position() != 0) {
+                throw new AssertionError();
+            }
+            // Is the size of the VB == 0?
+            final int limit = d.limit();
+            if (limit == 0) {
+                throw new AssertionError();
+            }
+            // Does offset exceed buffer limit or negative?
+            if (off > limit || off < 0) {
+                throw new AssertionError();
+            }
 
-        // Does usage comply with buffer directness?
-        //if (usage == Usage.CpuOnly && data.isDirect()) {
-        //    throw new AssertionError();
-        /*} else*/ if (usage != Usage.CpuOnly && !data.isDirect()) {
-            throw new AssertionError();
-        }
+            // Are components between 1 and 4 and not InstanceData?
+            if (t != Type.InstanceData) {
+                if (components < 1 || components > 4) {
+                    throw new AssertionError();
+                }
+            }
 
-        // Double/Char/Long buffers are not supported for VertexBuffers.
-        // For the rest, ensure they comply with the "Format" value.
-        if (data instanceof DoubleBuffer) {
-            throw new AssertionError();
-        } else if (data instanceof CharBuffer) {
-            throw new AssertionError();
-        } else if (data instanceof LongBuffer) {
-            throw new AssertionError();
-        } else if (data instanceof FloatBuffer && format != Format.Float) {
-            throw new AssertionError();
-        } else if (data instanceof IntBuffer && format != Format.Int && format != Format.UnsignedInt) {
-            throw new AssertionError();
-        } else if (data instanceof ShortBuffer && format != Format.Short && format != Format.UnsignedShort) {
-            throw new AssertionError();
-        } else if (data instanceof ByteBuffer && format != Format.Byte && format != Format.UnsignedByte) {
-            throw new AssertionError();
+            // Does usage comply with buffer directness?
+            if (u != Usage.CpuOnly && !d.isDirect()) {
+                throw new AssertionError();
+            }
+
+            // Double/Char/Long buffers are not supported for VertexBuffers.
+            if (d instanceof DoubleBuffer || d instanceof CharBuffer || d instanceof LongBuffer) {
+                throw new AssertionError();
+            }
+
+            // For the rest, ensure they comply with the "Format" value.
+            if (d instanceof FloatBuffer) {
+                if (f != Format.Float) {
+                    throw new AssertionError();
+                }
+            } else if (d instanceof IntBuffer) {
+                if (f != Format.Int && f != Format.UnsignedInt) {
+                    throw new AssertionError();
+                }
+            } else if (d instanceof ShortBuffer) {
+                if (f != Format.Short && f != Format.UnsignedShort) {
+                    throw new AssertionError();
+                }
+            } else if (d instanceof ByteBuffer) {
+                if (f != Format.Byte && f != Format.UnsignedByte) {
+                    throw new AssertionError();
+                }
+            }
+
+            return true;
         }
-        return true;
-    }
 
     /**
      * @return The offset after which the data is sent to the GPU.
