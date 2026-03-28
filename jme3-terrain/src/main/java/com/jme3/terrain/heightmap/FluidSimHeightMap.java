@@ -155,15 +155,13 @@ public class FluidSimHeightMap extends AbstractHeightMap {
         coefC = ((2 * waveSpeed * waveSpeed * timeStep * timeStep) / (nodeDistance * nodeDistance)) / (viscosity * timeStep + 2);
 
         // initialize the heightmaps to random values except for the edges
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                tempBuffer[0][j + i * size] = tempBuffer[1][j + i * size] = randomRange(random, minInitialHeight, maxInitialHeight);
-            }
+        float range = maxInitialHeight - minInitialHeight;
+        for (int i = 0; i < size * size; i++) {
+            float randomValue = (random.nextFloat() * range) + minInitialHeight;
+            tempBuffer[0][i] = tempBuffer[1][i] = randomValue;
         }
 
         int curBuf = 0;
-        int ind;
-
         float[] oldBuffer;
         float[] newBuffer;
 
@@ -172,49 +170,29 @@ public class FluidSimHeightMap extends AbstractHeightMap {
         // accesses one pixel of the k-1 timestep, so using a simple trick we only
         // need to store the heightmap twice, not three times, and we can avoid
         // copying data every iteration.
-        for (int i = 0; i < iterations; i++) {
+        for (int iter = 0; iter < iterations; iter++) {
             oldBuffer = tempBuffer[1 - curBuf];
             newBuffer = tempBuffer[curBuf];
 
-            for (int y = 0; y < size; y++) {
-                for (int x = 0; x < size; x++) {
-                    ind = x + y * size;
-                    float neighborsValue = 0;
-                    int neighbors = 0;
-
-                    if (x > 0) {
-                        neighborsValue += newBuffer[ind - 1];
-                        neighbors++;
-                    }
-                    if (x < size - 1) {
-                        neighborsValue += newBuffer[ind + 1];
-                        neighbors++;
-                    }
-                    if (y > 0) {
-                        neighborsValue += newBuffer[ind - size];
-                        neighbors++;
-                    }
-                    if (y < size - 1) {
-                        neighborsValue += newBuffer[ind + size];
-                        neighbors++;
-                    }
-                    if (neighbors != 4) {
-                        neighborsValue *= 4 / neighbors;
-                    }
-                    oldBuffer[ind] = coefA * newBuffer[ind] + coefB
-                            * oldBuffer[ind] + coefC * (neighborsValue);
+            // Handle interior points (most common case) separately for better performance
+            for (int y = 1; y < size - 1; y++) {
+                int rowOffset = y * size;
+                for (int x = 1; x < size - 1; x++) {
+                    int ind = x + rowOffset;
+                    float neighborsValue = newBuffer[ind - 1] + newBuffer[ind + 1] + 
+                                          newBuffer[ind - size] + newBuffer[ind + size];
+                    oldBuffer[ind] = coefA * newBuffer[ind] + coefB * oldBuffer[ind] + coefC * neighborsValue;
                 }
             }
+
+            // Handle edges with boundary conditions
+            handleEdges(newBuffer, oldBuffer);
 
             curBuf = 1 - curBuf;
         }
 
         // put the normalized heightmap into the range [0...255] and into the heightmap
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                heightData[x + y * size] = tempBuffer[curBuf][x + y * size];
-            }
-        }
+        System.arraycopy(tempBuffer[curBuf], 0, heightData, 0, size * size);
         normalizeTerrain(NORMALIZE_RANGE);
 
         logger.fine("Created Heightmap using fluid simulation");
@@ -306,4 +284,66 @@ public class FluidSimHeightMap extends AbstractHeightMap {
     public void setWaveSpeed(float waveSpeed) {
         this.waveSpeed = waveSpeed;
     }
+
+    private void handleEdges(float[] newBuffer, float[] oldBuffer) {
+        // Top and bottom edges
+        for (int x = 0; x < size; x++) {
+            // Top edge (y = 0)
+            int ind = x;
+            float neighborsValue = 0;
+            int neighbors = 0;
+            if (x > 0) {
+                neighborsValue += newBuffer[ind - 1];
+                neighbors++;
+            }
+            if (x < size - 1) {
+                neighborsValue += newBuffer[ind + 1];
+                neighbors++;
+            }
+            neighborsValue += newBuffer[ind + size];
+            neighbors++;
+
+            if (neighbors != 4) {
+                neighborsValue *= 4.0f / neighbors;
+            }
+            oldBuffer[ind] = coefA * newBuffer[ind] + coefB * oldBuffer[ind] + coefC * neighborsValue;
+
+            // Bottom edge (y = size - 1)
+            ind = x + (size - 1) * size;
+            neighborsValue = 0;
+            neighbors = 0;
+            if (x > 0) {
+                neighborsValue += newBuffer[ind - 1];
+                neighbors++;
+            }
+            if (x < size - 1) {
+                neighborsValue += newBuffer[ind + 1];
+                neighbors++;
+            }
+            neighborsValue += newBuffer[ind - size];
+            neighbors++;
+
+            if (neighbors != 4) {
+                neighborsValue *= 4.0f / neighbors;
+            }
+            oldBuffer[ind] = coefA * newBuffer[ind] + coefB * oldBuffer[ind] + coefC * neighborsValue;
+        }
+
+        // Left and right edges (excluding corners already processed)
+        for (int y = 1; y < size - 1; y++) {
+            // Left edge (x = 0)
+            int ind = y * size;
+            float neighborsValue = newBuffer[ind + 1] + newBuffer[ind - size] + newBuffer[ind + size];
+            int neighbors = 3;
+            neighborsValue *= 4.0f / neighbors;
+            oldBuffer[ind] = coefA * newBuffer[ind] + coefB * oldBuffer[ind] + coefC * neighborsValue;
+
+            // Right edge (x = size - 1)
+            ind = (size - 1) + y * size;
+            neighborsValue = newBuffer[ind - 1] + newBuffer[ind - size] + newBuffer[ind + size];
+            neighborsValue *= 4.0f / neighbors;
+            oldBuffer[ind] = coefA * newBuffer[ind] + coefB * oldBuffer[ind] + coefC * neighborsValue;
+        }
+    }
+
 }
