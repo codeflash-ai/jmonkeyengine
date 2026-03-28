@@ -228,7 +228,7 @@ public class CartoonEdgeFilter extends Filter {
      * 
      * @return the threshold
      */
-    public float getNormalThreshold() {
+    public final float getNormalThreshold() {
         return normalThreshold;
     }
 
