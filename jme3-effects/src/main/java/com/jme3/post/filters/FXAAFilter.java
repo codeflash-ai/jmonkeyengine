@@ -76,7 +76,7 @@ public class FXAAFilter extends Filter {
     }
     
     @Override
-    protected boolean isRequiresBilinear() {
+    protected final boolean isRequiresBilinear() {
         // FXAA wants the input texture to be filtered.
         return true;
     }
