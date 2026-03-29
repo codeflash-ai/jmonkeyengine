@@ -72,23 +72,47 @@ class ByteAlignedImageCodec extends ImageCodec {
     }
 
     private static int readComponent(byte[] encoded, int position, int size) {
-//        int component = encoded[position] & 0xff;
-//        while ((--size) > 0){
-//            component = (component << 8) | (encoded[++position] & 0xff);
-//        }
-//        return component;
+    //        int component = encoded[position] & 0xff;
+    //        while ((--size) > 0){
+    //            component = (component << 8) | (encoded[++position] & 0xff);
+    //        }
+    //        return component;
         try {
-            int component = 0;
-            for (int i = size - 1; i >= 0; i--) {
-                component = (component << 8) | (encoded[position + i] & 0xff);
+            // Fast paths for common sizes to avoid loop overhead and repeated index arithmetic.
+            int component;
+            switch (size) {
+                case 1:
+                    component = encoded[position] & 0xff;
+                    break;
+                case 2:
+                    component = ((encoded[position + 1] & 0xff) << 8) | (encoded[position] & 0xff);
+                    break;
+                case 3:
+                    component = ((encoded[position + 2] & 0xff) << 16)
+                              | ((encoded[position + 1] & 0xff) << 8)
+                              |  (encoded[position] & 0xff);
+                    break;
+                case 4:
+                    component = ((encoded[position + 3] & 0xff) << 24)
+                              | ((encoded[position + 2] & 0xff) << 16)
+                              | ((encoded[position + 1] & 0xff) << 8)
+                              |  (encoded[position] & 0xff);
+                    break;
+                default:
+                    component = 0;
+                    int idx = position + size - 1;
+                    // Iterate from most-significant byte to least-significant byte as original logic did.
+                    while (idx >= position) {
+                        component = (component << 8) | (encoded[idx--] & 0xff);
+                    }
             }
             return component;
-//        position += size - 1;
-//
-//        while ((--size) >= 0) {
-//            component = (component << 8) | (encoded[position--] & 0xff);
-//        }
-//        return component;
+    //        position += size - 1;
+    //
+    //        while ((--size) >= 0) {
+    //            component = (component << 8) | (encoded[position--] & 0xff);
+    //        }
+    //        return component;
         } catch (ArrayIndexOutOfBoundsException ex){
             ex.printStackTrace();
             return 0;
