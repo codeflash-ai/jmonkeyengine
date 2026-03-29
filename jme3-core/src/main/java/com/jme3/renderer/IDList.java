@@ -83,14 +83,18 @@ public class IDList {
         }
 
         // find idx in oldList, if removed successfully, return true.
-        for (int i = 0; i < oldLen; i++) {
-            if (oldList[i] == idx) {
+        // Use locals for hot-path efficiency and System.arraycopy for fast shifting.
+        int[] ol = oldList;
+        int olen = oldLen;
+        for (int i = 0; i < olen; i++) {
+            if (ol[i] == idx) {
                 // Found the index in slot i:
                 // delete the index from the old list.
-                oldLen--;
-                for (int j = i; j < oldLen; j++) {
-                    oldList[j] = oldList[j + 1];
+                int numMoved = olen - i - 1;
+                if (numMoved > 0) {
+                    System.arraycopy(ol, i + 1, ol, i, numMoved);
                 }
+                oldLen = olen - 1;
                 return true;
             }
         }
