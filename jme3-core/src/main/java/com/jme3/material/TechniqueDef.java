@@ -403,7 +403,7 @@ public class TechniqueDef implements Savable, Cloneable {
      * @return The type of the define, or null if not found.
      */
     public VarType getDefineIdType(int defineId) {
-        return defineId < defineTypes.size() ? defineTypes.get(defineId) : null;
+        return (defineId >= 0 && defineId < defineTypes.size()) ? defineTypes.get(defineId) : null;
     }
 
     /**
