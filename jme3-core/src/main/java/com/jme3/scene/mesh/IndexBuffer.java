@@ -75,12 +75,12 @@ public abstract class IndexBuffer {
             int indexCount) {
         IndexBuffer result;
 
-        if (vertexCount < 128) { // TODO: could be vertexCount <= 256
+        if (vertexCount <= 256) {
             ByteBuffer buffer = BufferUtils.createByteBuffer(indexCount);
-            int maxIndexValue = Math.max(0, vertexCount - 1);
+            int maxIndexValue = vertexCount - 1;
             result = new IndexByteBuffer(buffer, maxIndexValue);
 
-        } else if (vertexCount < 65536) { // TODO: could be <= 65536
+        } else if (vertexCount <= 65536) {
             ShortBuffer buffer = BufferUtils.createShortBuffer(indexCount);
             int maxIndexValue = vertexCount - 1;
             result = new IndexShortBuffer(buffer, maxIndexValue);
