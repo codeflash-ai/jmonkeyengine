@@ -70,11 +70,12 @@ public class AudioBuffer extends AudioData {
      */
     @Override
     public float getDuration() {
-        int bytesPerSec = (bitsPerSample / 8) * channels * sampleRate;
-        if (audioData != null)
+        if (audioData != null) {
+            int bytesPerSec = (bitsPerSample >> 3) * channels * sampleRate;
             return (float) audioData.limit() / bytesPerSec;
-        else
+        } else {
             return Float.NaN; // unknown
+        }
     }
 
     @Override
