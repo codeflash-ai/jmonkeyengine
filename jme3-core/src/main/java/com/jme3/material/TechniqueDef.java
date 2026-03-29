@@ -379,11 +379,7 @@ public class TechniqueDef implements Savable, Cloneable {
      */
     public String getShaderParamDefine(String paramName) {
         Integer defineId = paramToDefineId.get(paramName);
-        if (defineId != null) {
-            return defineNames.get(defineId);
-        } else {
-            return null;
-        }
+        return (defineId != null) ? defineNames.get(defineId.intValue()) : null;
     }
 
     /**
