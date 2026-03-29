@@ -44,6 +44,8 @@ public abstract class StructField<T> {
     private String name;
     private int depth = 0;
     private int group = 0;
+    private static final ThreadLocal<StringBuilder> TL_BUILDER =
+                ThreadLocal.withInitial(() -> new StringBuilder(64));
 
     protected StructField(int position, String name, T value) {
         this.position = position;
@@ -129,7 +131,15 @@ public abstract class StructField<T> {
 
     @Override
     public String toString() {
-        return "StructField[" + getName() + "] = " + value.toString();
+        // Preserve evaluation order: getName() must be evaluated before value.toString()
+        String friendlyName = getName();
+        String valueString = value.toString();
+
+        StringBuilder sb = TL_BUILDER.get();
+        sb.setLength(0);
+        sb.append("StructField[").append(friendlyName).append("] = ").append(valueString);
+        // toString() must return a new String object (StringBuilder.toString() does that).
+        return sb.toString();
     }
 
 }
