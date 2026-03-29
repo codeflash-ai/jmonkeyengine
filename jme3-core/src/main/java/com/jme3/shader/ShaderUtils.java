@@ -140,6 +140,20 @@ public class ShaderUtils {
      * @return true if a variable of the given type can have a swizzle
      */
     public static boolean isSwizzlable(String type) {
-        return type.indexOf("vec4")>-1 || type.indexOf("vec3")>-1 || type.indexOf("vec2")>-1 || type.equals("float");
+        // Keep the exact-equality check for "float" first (preserves NPE for null as original)
+        if (type.equals("float")) {
+            return true;
+        }
+        int len = type.length();
+        // Scan once for any occurrence of "vec" followed by '2', '3', or '4'
+        for (int i = 0; i + 3 < len; i++) {
+            if (type.charAt(i) == 'v' && type.charAt(i + 1) == 'e' && type.charAt(i + 2) == 'c') {
+                char c = type.charAt(i + 3);
+                if (c == '2' || c == '3' || c == '4') {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
