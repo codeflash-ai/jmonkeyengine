@@ -37,10 +37,13 @@ public class IrPolygon {
     
     public IrPolygon deepClone() {
         IrPolygon p = new IrPolygon();
-        p.vertices = new IrVertex[vertices.length];
-        for (int i = 0; i < vertices.length; i++) {
-            p.vertices[i] = vertices[i].deepClone();
+        IrVertex[] v = vertices;
+        int len = v.length;
+        IrVertex[] cloned = new IrVertex[len];
+        for (int i = 0; i < len; i++) {
+            cloned[i] = v[i].deepClone();
         }
+        p.vertices = cloned;
         return p;
     }
 }
