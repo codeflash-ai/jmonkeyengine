@@ -55,8 +55,8 @@ public final class DefineList {
 
     private DefineList(DefineList original) {
         this.isSet = (BitSet) original.isSet.clone();
-        this.values = new int[original.values.length];
-        System.arraycopy(original.values, 0, values, 0, values.length);
+        // Use array clone which is implemented as an optimized native array copy.
+        this.values = original.values.clone();
     }
 
     private void rangeCheck(int id) {
