@@ -157,15 +157,12 @@ public final class DefineList {
         if (values.length != otherDefineList.values.length) {
             return false;
         }
-        if (!isSet.equals(otherDefineList.isSet)) {
+        // Compare primitive int array using Arrays.equals which is typically
+        // optimized by the JVM, and do it before BitSet comparison to fail fast.
+        if (!Arrays.equals(values, otherDefineList.values)) {
             return false;
         }
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] != otherDefineList.values[i]) {
-                return false;
-            }
-        }
-        return true;
+        return isSet.equals(otherDefineList.isSet);
     }
 
     public DefineList deepClone() {
