@@ -129,7 +129,8 @@ public final class DefineList {
     }
 
     public boolean getBoolean(int id) {
-        return values[id] != 0;
+        final int[] vals = this.values;
+        return vals[id] != 0;
     }
 
     public float getFloat(int id) {
