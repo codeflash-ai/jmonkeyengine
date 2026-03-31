@@ -1020,10 +1020,6 @@ public final class Vector3f implements Savable, Cloneable, java.io.Serializable 
             return false;
         }
 
-        if (this == o) {
-            return true;
-        }
-
         Vector3f comp = (Vector3f) o;
         if (Float.compare(x, comp.x) != 0) {
             return false;
@@ -1031,10 +1027,7 @@ public final class Vector3f implements Savable, Cloneable, java.io.Serializable 
         if (Float.compare(y, comp.y) != 0) {
             return false;
         }
-        if (Float.compare(z, comp.z) != 0) {
-            return false;
-        }
-        return true;
+        return Float.compare(z, comp.z) == 0;
     }
 
     /**
