@@ -1546,61 +1546,64 @@ public final class Matrix4f implements Savable, Cloneable, java.io.Serializable 
      * @return the (inverted) current instance (for chaining)
      */
     public Matrix4f invertLocal() {
+        // Store matrix elements in local variables to reduce field access overhead
+        float l_m00 = m00, l_m01 = m01, l_m02 = m02, l_m03 = m03;
+        float l_m10 = m10, l_m11 = m11, l_m12 = m12, l_m13 = m13;
+        float l_m20 = m20, l_m21 = m21, l_m22 = m22, l_m23 = m23;
+        float l_m30 = m30, l_m31 = m31, l_m32 = m32, l_m33 = m33;
 
-        float fA0 = m00 * m11 - m01 * m10;
-        float fA1 = m00 * m12 - m02 * m10;
-        float fA2 = m00 * m13 - m03 * m10;
-        float fA3 = m01 * m12 - m02 * m11;
-        float fA4 = m01 * m13 - m03 * m11;
-        float fA5 = m02 * m13 - m03 * m12;
-        float fB0 = m20 * m31 - m21 * m30;
-        float fB1 = m20 * m32 - m22 * m30;
-        float fB2 = m20 * m33 - m23 * m30;
-        float fB3 = m21 * m32 - m22 * m31;
-        float fB4 = m21 * m33 - m23 * m31;
-        float fB5 = m22 * m33 - m23 * m32;
+        float fA0 = l_m00 * l_m11 - l_m01 * l_m10;
+        float fA1 = l_m00 * l_m12 - l_m02 * l_m10;
+        float fA2 = l_m00 * l_m13 - l_m03 * l_m10;
+        float fA3 = l_m01 * l_m12 - l_m02 * l_m11;
+        float fA4 = l_m01 * l_m13 - l_m03 * l_m11;
+        float fA5 = l_m02 * l_m13 - l_m03 * l_m12;
+        float fB0 = l_m20 * l_m31 - l_m21 * l_m30;
+        float fB1 = l_m20 * l_m32 - l_m22 * l_m30;
+        float fB2 = l_m20 * l_m33 - l_m23 * l_m30;
+        float fB3 = l_m21 * l_m32 - l_m22 * l_m31;
+        float fB4 = l_m21 * l_m33 - l_m23 * l_m31;
+        float fB5 = l_m22 * l_m33 - l_m23 * l_m32;
         float fDet = fA0 * fB5 - fA1 * fB4 + fA2 * fB3 + fA3 * fB2 - fA4 * fB1 + fA5 * fB0;
 
         if (FastMath.abs(fDet) <= 0f) {
             return zero();
         }
 
-        float f00 = +m11 * fB5 - m12 * fB4 + m13 * fB3;
-        float f10 = -m10 * fB5 + m12 * fB2 - m13 * fB1;
-        float f20 = +m10 * fB4 - m11 * fB2 + m13 * fB0;
-        float f30 = -m10 * fB3 + m11 * fB1 - m12 * fB0;
-        float f01 = -m01 * fB5 + m02 * fB4 - m03 * fB3;
-        float f11 = +m00 * fB5 - m02 * fB2 + m03 * fB1;
-        float f21 = -m00 * fB4 + m01 * fB2 - m03 * fB0;
-        float f31 = +m00 * fB3 - m01 * fB1 + m02 * fB0;
-        float f02 = +m31 * fA5 - m32 * fA4 + m33 * fA3;
-        float f12 = -m30 * fA5 + m32 * fA2 - m33 * fA1;
-        float f22 = +m30 * fA4 - m31 * fA2 + m33 * fA0;
-        float f32 = -m30 * fA3 + m31 * fA1 - m32 * fA0;
-        float f03 = -m21 * fA5 + m22 * fA4 - m23 * fA3;
-        float f13 = +m20 * fA5 - m22 * fA2 + m23 * fA1;
-        float f23 = -m20 * fA4 + m21 * fA2 - m23 * fA0;
-        float f33 = +m20 * fA3 - m21 * fA1 + m22 * fA0;
-
-        m00 = f00;
-        m01 = f01;
-        m02 = f02;
-        m03 = f03;
-        m10 = f10;
-        m11 = f11;
-        m12 = f12;
-        m13 = f13;
-        m20 = f20;
-        m21 = f21;
-        m22 = f22;
-        m23 = f23;
-        m30 = f30;
-        m31 = f31;
-        m32 = f32;
-        m33 = f33;
+        float f00 = +l_m11 * fB5 - l_m12 * fB4 + l_m13 * fB3;
+        float f10 = -l_m10 * fB5 + l_m12 * fB2 - l_m13 * fB1;
+        float f20 = +l_m10 * fB4 - l_m11 * fB2 + l_m13 * fB0;
+        float f30 = -l_m10 * fB3 + l_m11 * fB1 - l_m12 * fB0;
+        float f01 = -l_m01 * fB5 + l_m02 * fB4 - l_m03 * fB3;
+        float f11 = +l_m00 * fB5 - l_m02 * fB2 + l_m03 * fB1;
+        float f21 = -l_m00 * fB4 + l_m01 * fB2 - l_m03 * fB0;
+        float f31 = +l_m00 * fB3 - l_m01 * fB1 + l_m02 * fB0;
+        float f02 = +l_m31 * fA5 - l_m32 * fA4 + l_m33 * fA3;
+        float f12 = -l_m30 * fA5 + l_m32 * fA2 - l_m33 * fA1;
+        float f22 = +l_m30 * fA4 - l_m31 * fA2 + l_m33 * fA0;
+        float f32 = -l_m30 * fA3 + l_m31 * fA1 - l_m32 * fA0;
+        float f03 = -l_m21 * fA5 + l_m22 * fA4 - l_m23 * fA3;
+        float f13 = +l_m20 * fA5 - l_m22 * fA2 + l_m23 * fA1;
+        float f23 = -l_m20 * fA4 + l_m21 * fA2 - l_m23 * fA0;
+        float f33 = +l_m20 * fA3 - l_m21 * fA1 + l_m22 * fA0;
 
         float fInvDet = 1.0f / fDet;
-        multLocal(fInvDet);
+        m00 = f00 * fInvDet;
+        m01 = f01 * fInvDet;
+        m02 = f02 * fInvDet;
+        m03 = f03 * fInvDet;
+        m10 = f10 * fInvDet;
+        m11 = f11 * fInvDet;
+        m12 = f12 * fInvDet;
+        m13 = f13 * fInvDet;
+        m20 = f20 * fInvDet;
+        m21 = f21 * fInvDet;
+        m22 = f22 * fInvDet;
+        m23 = f23 * fInvDet;
+        m30 = f30 * fInvDet;
+        m31 = f31 * fInvDet;
+        m32 = f32 * fInvDet;
+        m33 = f33 * fInvDet;
 
         return this;
     }
