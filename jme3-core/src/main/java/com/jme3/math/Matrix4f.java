@@ -2260,64 +2260,67 @@ public final class Matrix4f implements Savable, Cloneable, java.io.Serializable 
      */
     @Override
     public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
         if (o == null || o.getClass() != getClass()) {
             return false;
         }
 
-        if (this == o) {
-            return true;
-        }
-
         Matrix4f comp = (Matrix4f) o;
-        if (Float.compare(m00, comp.m00) != 0) {
+
+        // Use bitwise float comparison to preserve Float.compare semantics
+        // (distinguish -0.0f and 0.0f, treat NaNs consistently) while avoiding
+        // the overhead of repeated Float.compare calls.
+        if (Float.floatToIntBits(m00) != Float.floatToIntBits(comp.m00)) {
             return false;
         }
-        if (Float.compare(m01, comp.m01) != 0) {
+        if (Float.floatToIntBits(m01) != Float.floatToIntBits(comp.m01)) {
             return false;
         }
-        if (Float.compare(m02, comp.m02) != 0) {
+        if (Float.floatToIntBits(m02) != Float.floatToIntBits(comp.m02)) {
             return false;
         }
-        if (Float.compare(m03, comp.m03) != 0) {
+        if (Float.floatToIntBits(m03) != Float.floatToIntBits(comp.m03)) {
             return false;
         }
 
-        if (Float.compare(m10, comp.m10) != 0) {
+        if (Float.floatToIntBits(m10) != Float.floatToIntBits(comp.m10)) {
             return false;
         }
-        if (Float.compare(m11, comp.m11) != 0) {
+        if (Float.floatToIntBits(m11) != Float.floatToIntBits(comp.m11)) {
             return false;
         }
-        if (Float.compare(m12, comp.m12) != 0) {
+        if (Float.floatToIntBits(m12) != Float.floatToIntBits(comp.m12)) {
             return false;
         }
-        if (Float.compare(m13, comp.m13) != 0) {
-            return false;
-        }
-
-        if (Float.compare(m20, comp.m20) != 0) {
-            return false;
-        }
-        if (Float.compare(m21, comp.m21) != 0) {
-            return false;
-        }
-        if (Float.compare(m22, comp.m22) != 0) {
-            return false;
-        }
-        if (Float.compare(m23, comp.m23) != 0) {
+        if (Float.floatToIntBits(m13) != Float.floatToIntBits(comp.m13)) {
             return false;
         }
 
-        if (Float.compare(m30, comp.m30) != 0) {
+        if (Float.floatToIntBits(m20) != Float.floatToIntBits(comp.m20)) {
             return false;
         }
-        if (Float.compare(m31, comp.m31) != 0) {
+        if (Float.floatToIntBits(m21) != Float.floatToIntBits(comp.m21)) {
             return false;
         }
-        if (Float.compare(m32, comp.m32) != 0) {
+        if (Float.floatToIntBits(m22) != Float.floatToIntBits(comp.m22)) {
             return false;
         }
-        if (Float.compare(m33, comp.m33) != 0) {
+        if (Float.floatToIntBits(m23) != Float.floatToIntBits(comp.m23)) {
+            return false;
+        }
+
+        if (Float.floatToIntBits(m30) != Float.floatToIntBits(comp.m30)) {
+            return false;
+        }
+        if (Float.floatToIntBits(m31) != Float.floatToIntBits(comp.m31)) {
+            return false;
+        }
+        if (Float.floatToIntBits(m32) != Float.floatToIntBits(comp.m32)) {
+            return false;
+        }
+        if (Float.floatToIntBits(m33) != Float.floatToIntBits(comp.m33)) {
             return false;
         }
 
