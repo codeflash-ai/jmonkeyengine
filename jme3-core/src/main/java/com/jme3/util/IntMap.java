@@ -140,8 +140,9 @@ public final class IntMap<T> implements Iterable<Entry<T>>, Cloneable, JmeClonea
 
     @SuppressWarnings("unchecked")
     public T get(int key) {
+        Entry[] tab = table;
         int index = key & mask;
-        for (Entry e = table[index]; e != null; e = e.next){
+        for (Entry e = tab[index]; e != null; e = e.next){
             if (e.key == key){
                 return (T) e.value;
             }
