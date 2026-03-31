@@ -552,25 +552,25 @@ public final class ColorRGBA implements Savable, Cloneable, java.io.Serializable
      */
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof ColorRGBA)) {
-            return false;
-        }
-
         if (this == o) {
             return true;
         }
 
+        if (!(o instanceof ColorRGBA)) {
+            return false;
+        }
+
         ColorRGBA comp = (ColorRGBA) o;
-        if (Float.compare(r, comp.r) != 0) {
+        if (Float.floatToIntBits(r) != Float.floatToIntBits(comp.r)) {
             return false;
         }
-        if (Float.compare(g, comp.g) != 0) {
+        if (Float.floatToIntBits(g) != Float.floatToIntBits(comp.g)) {
             return false;
         }
-        if (Float.compare(b, comp.b) != 0) {
+        if (Float.floatToIntBits(b) != Float.floatToIntBits(comp.b)) {
             return false;
         }
-        if (Float.compare(a, comp.a) != 0) {
+        if (Float.floatToIntBits(a) != Float.floatToIntBits(comp.a)) {
             return false;
         }
         return true;
