@@ -102,9 +102,17 @@ public class DefaultParticleInfluencer implements ParticleInfluencer {
 
     @Override
     public DefaultParticleInfluencer clone() {
-        // Set up the cloner for the type of cloning we want to do.
-        Cloner cloner = new Cloner();
-        DefaultParticleInfluencer clone = cloner.clone(this);
+        // Perform a shallow construction and manually deep-copy mutable fields.
+        // This avoids the heavy reflective Cloner allocation and provides a much
+        // faster clone for this simple type while preserving exact behavior:
+        // - same field values
+        // - distinct Vector3f instances for temp and initialVelocity
+        DefaultParticleInfluencer clone = new DefaultParticleInfluencer();
+        // Copy primitive
+        clone.velocityVariation = this.velocityVariation;
+        // Clone Vector3f fields if present to ensure distinct instances
+        clone.initialVelocity = (this.initialVelocity == null) ? null : this.initialVelocity.clone();
+        clone.temp = (this.temp == null) ? null : this.temp.clone();
         return clone;
     }
 
