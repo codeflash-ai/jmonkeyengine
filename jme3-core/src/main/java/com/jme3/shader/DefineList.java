@@ -154,18 +154,10 @@ public final class DefineList {
             return false;
         }
         DefineList otherDefineList = (DefineList) object;
-        if (values.length != otherDefineList.values.length) {
-            return false;
-        }
         if (!isSet.equals(otherDefineList.isSet)) {
             return false;
         }
-        for (int i = 0; i < values.length; i++) {
-            if (values[i] != otherDefineList.values[i]) {
-                return false;
-            }
-        }
-        return true;
+        return Arrays.equals(values, otherDefineList.values);
     }
 
     public DefineList deepClone() {
